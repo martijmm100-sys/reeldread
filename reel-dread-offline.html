@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REEL DREAD OFFLINE — Movie Picker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Crimson+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+    :root {
+      --text-xs: clamp(0.75rem, 0.72rem + 0.2vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.84rem + 0.25vw, 1rem);
+      --text-base: clamp(1rem, 0.96rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.6vw, 1.45rem);
+      --text-xl: clamp(1.45rem, 1.2rem + 1vw, 2.1rem);
+      --text-2xl: clamp(2rem, 1.4rem + 2vw, 3.25rem);
+      --space-1: .25rem; --space-2: .5rem; --space-3: .75rem; --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem;
+      --radius-sm: .375rem; --radius-md: .5rem; --radius-lg: .8rem; --radius-xl: 1rem; --radius-full: 9999px;
+      --font-display: 'Cinzel', Georgia, serif;
+      --font-body: 'Crimson Pro', Georgia, serif;
+      --transition: 180ms cubic-bezier(.16,1,.3,1);
+    }
+    [data-theme="dark"], :root {
+      --bg: #090708;
+      --surface: #120e10;
+      --surface-2: #191416;
+      --surface-3: #231c1f;
+      --border: #3b3034;
+      --divider: #2d2326;
+      --text: #efe6e3;
+      --text-muted: #b5a5a2;
+      --text-faint: #736769;
+      --primary: #c23a30;
+      --primary-2: #8c221b;
+      --gold: #c3a137;
+      --success: #6c9669;
+      --shadow: 0 14px 38px rgba(0,0,0,.45);
+      --glow: 0 0 24px rgba(194,58,48,.28);
+    }
+    [data-theme="light"] {
+      --bg: #f7f0ed;
+      --surface: #fff9f7;
+      --surface-2: #f3e9e7;
+      --surface-3: #eadfdd;
+      --border: #d8c8c4;
+      --divider: #ddcfcb;
+      --text: #1f1514;
+      --text-muted: #6d5a57;
+      --text-faint: #958684;
+      --primary: #b52f25;
+      --primary-2: #841c15;
+      --gold: #8f7218;
+      --success: #447047;
+      --shadow: 0 14px 38px rgba(35,20,18,.12);
+      --glow: none;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-text-size-adjust:none;text-size-adjust:none;scroll-behavior:smooth}
+    body{
+      min-height:100dvh;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:var(--text-base);line-height:1.6;
+      background-image:radial-gradient(ellipse 80% 50% at 50% -10%, rgba(194,58,48,.18), transparent 60%), radial-gradient(circle at 20% 0%, rgba(255,255,255,.03), transparent 25%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+    }
+    img,svg{display:block;max-width:100%}
+    button,input,select{font:inherit;color:inherit}
+    button{cursor:pointer;border:none;background:none}
+    a{color:inherit}
+    :focus-visible{outline:2px solid var(--primary);outline-offset:3px;border-radius:var(--radius-sm)}
+    .app{max-width:1180px;margin:0 auto;padding:var(--space-4)}
+    .header{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);padding:var(--space-4) 0 var(--space-6);border-bottom:1px solid var(--divider)}
+    .logo{display:flex;align-items:center;gap:var(--space-3);text-decoration:none}
+    .logo-mark{width:38px;height:38px;color:var(--primary)}
+    .logo-text{font-family:var(--font-display);font-size:var(--text-xl);font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+    .logo-text span{color:var(--primary)}
+    .header-actions{display:flex;align-items:center;gap:var(--space-3)}
+    .icon-btn{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:var(--radius-md);background:var(--surface);border:1px solid var(--border);transition:transform var(--transition),border-color var(--transition),background var(--transition),color var(--transition);color:var(--text-muted);position:relative}
+    .icon-btn:hover{transform:translateY(-1px);border-color:var(--primary);color:var(--text);background:var(--surface-2)}
+    .badge{position:absolute;top:-5px;right:-5px;min-width:16px;height:16px;padding:0 4px;border-radius:var(--radius-full);background:var(--primary);color:#fff;font-size:10px;font-family:var(--font-display);display:none;align-items:center;justify-content:center}
+    .hero{padding:var(--space-8) 0 var(--space-8)}
+    .eyebrow{font-family:var(--font-display);font-size:var(--text-xs);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:var(--space-3)}
+    .hero h1{font-family:var(--font-display);font-size:var(--text-2xl);line-height:1.08;max-width:12ch;margin-bottom:var(--space-4)}
+    .hero h1 span{color:var(--primary)}
+    .hero p{max-width:56ch;color:var(--text-muted)}
+    .breadcrumb{display:flex;flex-wrap:wrap;gap:var(--space-2);align-items:center;font-family:var(--font-display);font-size:var(--text-xs);letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin:0 0 var(--space-6)}
+    .breadcrumb button{color:var(--text-muted)}
+    .breadcrumb button:hover{color:var(--primary)}
+    .section-title{display:flex;align-items:center;gap:var(--space-3);font-family:var(--font-display);font-size:var(--text-lg);letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:var(--space-5)}
+    .section-title::after{content:"";height:1px;flex:1;background:var(--divider)}
+    .panel{background:linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid var(--border);border-radius:var(--radius-xl);box-shadow:var(--shadow)}
+    .grid{display:grid;gap:var(--space-4)}
+    .genre-grid{grid-template-columns:repeat(auto-fill,minmax(min(170px,100%),1fr))}
+    .genre-card,.sub-card{
+      padding:var(--space-5);border:1px solid var(--border);border-radius:var(--radius-lg);background:linear-gradient(180deg,var(--surface),var(--surface-2));transition:transform var(--transition),border-color var(--transition),box-shadow var(--transition),background var(--transition);text-align:left
+    }
+    .genre-card:hover,.sub-card:hover{transform:translateY(-3px);border-color:var(--primary);box-shadow:var(--glow),var(--shadow);background:linear-gradient(180deg,var(--surface-2),var(--surface-3))}
+    .genre-card .emoji{font-size:1.9rem;line-height:1;margin-bottom:var(--space-3)}
+    .genre-card h3,.sub-card h3{font-family:var(--font-display);font-size:var(--text-sm);letter-spacing:.06em;text-transform:uppercase;margin-bottom:var(--space-1)}
+    .genre-card p,.sub-card p{font-size:var(--text-sm);color:var(--text-muted)}
+    .sub-grid{grid-template-columns:repeat(auto-fill,minmax(min(230px,100%),1fr))}
+    .filters{display:flex;flex-wrap:wrap;gap:var(--space-3);padding:var(--space-4);margin-bottom:var(--space-6)}
+    .filter{display:flex;align-items:center;gap:var(--space-2);flex:1;min-width:170px}
+    .filter label{font-family:var(--font-display);font-size:var(--text-xs);letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);white-space:nowrap}
+    .select{width:100%;padding:.65rem .8rem;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md);appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23978684' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:2rem}
+    .movies-top{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--space-4);margin-bottom:var(--space-6);flex-wrap:wrap}
+    .movies-top h2{font-family:var(--font-display);font-size:var(--text-xl);letter-spacing:.05em;text-transform:uppercase}
+    .movies-top h2 span{color:var(--primary)}
+    .movies-top p{color:var(--text-muted)}
+    .btn-primary{display:inline-flex;align-items:center;gap:var(--space-2);padding:.8rem 1rem;background:var(--primary);color:#fff;border-radius:var(--radius-md);font-family:var(--font-display);font-size:var(--text-sm);letter-spacing:.08em;text-transform:uppercase;box-shadow:var(--glow);transition:transform var(--transition),background var(--transition)}
+    .btn-primary:hover{transform:translateY(-1px);background:var(--primary-2)}
+    .movie-grid{grid-template-columns:repeat(auto-fill,minmax(min(290px,100%),1fr));gap:var(--space-5)}
+    .movie-card{overflow:hidden}
+    .movie-card:hover{transform:translateY(-3px)}
+    .poster{
+      aspect-ratio:2/3;padding:var(--space-4);display:flex;align-items:flex-end;position:relative;overflow:hidden;border-bottom:1px solid var(--divider)
+    }
+    .poster::before,.poster::after{content:"";position:absolute;inset:0}
+    .poster::before{background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.78))}
+    .poster::after{background:radial-gradient(circle at 75% 20%,rgba(255,255,255,.12),transparent 28%)}
+    .poster-slasher{background:linear-gradient(145deg,#140708,#421012 55%,#0b0506)}
+    .poster-supernatural{background:linear-gradient(145deg,#091218,#21384c 55%,#06080c)}
+    .poster-psychological{background:linear-gradient(145deg,#151015,#473b47 55%,#090709)}
+    .poster-zombie{background:linear-gradient(145deg,#0f130c,#364329 55%,#0a0d09)}
+    .poster-found_footage{background:linear-gradient(145deg,#0b0b0b,#3e2a1d 55%,#070707)}
+    .poster-vampire{background:linear-gradient(145deg,#12060f,#45152f 55%,#08050a)}
+    .poster-serial_killer{background:linear-gradient(145deg,#150809,#4b1719 55%,#090505)}
+    .poster-neo_noir{background:linear-gradient(145deg,#06080d,#243046 55%,#050609)}
+    .poster-conspiracy{background:linear-gradient(145deg,#07110d,#1f4d40 55%,#050807)}
+    .poster-paranoia{background:linear-gradient(145deg,#110e12,#3c3944 55%,#09080a)}
+    .poster-alien{background:linear-gradient(145deg,#05090f,#15354a 55%,#05070a)}
+    .poster-dystopia{background:linear-gradient(145deg,#120f09,#584321 55%,#0a0907)}
+    .poster-time_loop{background:linear-gradient(145deg,#0f0713,#39215d 55%,#08050a)}
+    .poster-gothic{background:linear-gradient(145deg,#110809,#3c2023 55%,#080607)}
+    .poster-isolation{background:linear-gradient(145deg,#0d1011,#294149 55%,#07090a)}
+    .poster-cult_classic{background:linear-gradient(145deg,#120d05,#5b3b12 55%,#090703)}
+    .poster-content{position:relative;z-index:1;width:100%}
+    .poster-label{font-family:var(--font-display);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:var(--space-2)}
+    .poster-title{font-family:var(--font-display);font-size:clamp(1.35rem,1.05rem + .9vw,1.8rem);line-height:1.08;max-width:10ch;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.55)}
+    .poster-year{margin-top:var(--space-2);font-size:var(--text-xs);color:rgba(255,255,255,.82)}
+    .movie-body{padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-2)}
+    .movie-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3)}
+    .movie-title{font-family:var(--font-display);font-size:var(--text-base);line-height:1.25}
+    .score{padding:.2rem .45rem;border-radius:var(--radius-full);border:1px solid rgba(195,161,55,.45);color:var(--gold);font-family:var(--font-display);font-size:var(--text-xs);white-space:nowrap}
+    .meta{display:flex;flex-wrap:wrap;gap:var(--space-2);font-family:var(--font-display);font-size:var(--text-xs);letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)}
+    .synopsis{color:var(--text-muted);font-size:var(--text-sm);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;min-height:5.8em}
+    .tags{display:flex;flex-wrap:wrap;gap:var(--space-1)}
+    .tag{padding:.12rem .45rem;border-radius:var(--radius-full);background:rgba(194,58,48,.12);border:1px solid rgba(194,58,48,.2);color:var(--primary);font-family:var(--font-display);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+    .card-actions{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);padding-top:var(--space-3);border-top:1px solid var(--divider)}
+    .ghost-btn{display:inline-flex;align-items:center;gap:var(--space-2);padding:.55rem .8rem;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--surface-2);font-family:var(--font-display);font-size:var(--text-xs);letter-spacing:.06em;text-transform:uppercase;transition:all var(--transition)}
+    .ghost-btn:hover{border-color:var(--primary);color:var(--primary)}
+    .ghost-btn.saved{border-color:rgba(195,161,55,.45);color:var(--gold);background:rgba(195,161,55,.08)}
+    .state{padding:var(--space-12) var(--space-5);text-align:center;color:var(--text-muted)}
+    .state h3{font-family:var(--font-display);font-size:var(--text-lg);letter-spacing:.07em;text-transform:uppercase;color:var(--text);margin:.8rem 0 .4rem}
+    .watchlist{position:fixed;top:0;right:0;bottom:0;width:min(420px,100vw);transform:translateX(100%);transition:transform 280ms cubic-bezier(.16,1,.3,1);background:var(--surface);border-left:1px solid var(--border);z-index:20;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+    .watchlist.open{transform:translateX(0)}
+    .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.58);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity var(--transition);z-index:19}
+    .backdrop.show{opacity:1;pointer-events:auto}
+    .watch-head{display:flex;align-items:center;justify-content:space-between;padding:var(--space-5);border-bottom:1px solid var(--divider)}
+    .watch-head h2{font-family:var(--font-display);font-size:var(--text-lg);letter-spacing:.07em;text-transform:uppercase}
+    .watch-head h2 span{color:var(--primary)}
+    .watch-body{padding:var(--space-4);overflow:auto;display:grid;gap:var(--space-3)}
+    .watch-item{display:grid;grid-template-columns:68px 1fr auto;gap:var(--space-3);align-items:start;padding:var(--space-3);background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-lg)}
+    .watch-thumb{aspect-ratio:2/3;border-radius:var(--radius-sm);display:flex;align-items:flex-end;padding:.45rem;overflow:hidden;position:relative}
+    .watch-thumb::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.72))}
+    .watch-thumb span{position:relative;z-index:1;color:#fff;font-family:var(--font-display);font-size:11px;line-height:1.05}
+    .watch-title{font-family:var(--font-display);font-size:var(--text-sm);line-height:1.25}
+    .watch-meta{font-size:var(--text-xs);color:var(--text-faint)}
+    .foot{padding:var(--space-8) 0 var(--space-4);text-align:center;color:var(--text-faint);font-size:var(--text-xs);border-top:1px solid var(--divider);margin-top:var(--space-16)}
+    @media (max-width:700px){
+      .movies-top{align-items:flex-start}
+      .hero h1{max-width:11ch}
+      .watchlist{width:100vw}
+    }
+  </style>
+</head>
+<body>
+  <div class="backdrop" id="backdrop" onclick="closeWatchlist()"></div>
+  <aside class="watchlist" id="watchlistPanel" aria-label="Watchlist">
+    <div class="watch-head">
+      <h2>My <span>List</span></h2>
+      <button class="icon-btn" onclick="closeWatchlist()" aria-label="Close watchlist"><i data-lucide="x" width="18" height="18"></i></button>
+    </div>
+    <div class="watch-body" id="watchlistBody"></div>
+  </aside>
+
+  <div class="app">
+    <header class="header">
+      <a href="#" class="logo" onclick="goHome();return false;">
+        <svg class="logo-mark" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2"/>
+          <circle cx="24" cy="24" r="10" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="24" cy="24" r="3" fill="currentColor"/>
+          <line x1="24" y1="2" x2="24" y2="14" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="2" y1="24" x2="14" y2="24" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="34" y1="24" x2="46" y2="24" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="24" y1="34" x2="24" y2="46" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M24 2 Q25.4 7.5 24 11.5 Q22.6 7.5 24 2Z" fill="currentColor" opacity=".85"/>
+        </svg>
+        <div class="logo-text"><span>Reel</span> Dread</div>
+      </a>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" aria-label="Toggle theme"><i data-lucide="moon" width="18" height="18"></i></button>
+        <button class="icon-btn" onclick="openWatchlist()" aria-label="Open watchlist"><i data-lucide="bookmark" width="18" height="18"></i><span class="badge" id="watchBadge">0</span></button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow">Offline • No Sign-In • Curated Picks</div>
+      <h1>Choose a <span>dark lane</span>, then let the app deal you five films.</h1>
+      <p>This version is fully self-contained. No account, no API key, no external movie posters. It uses original horror-themed poster cards and a built-in curated library so it runs directly from a single HTML file on your phone or from GitHub Pages.</p>
+    </section>
+
+    <main id="appRoot"></main>
+
+    <footer class="foot">Offline edition — original app artwork only, curated catalog built into one HTML file.</footer>
+  </div>
+
+<script>
+const CATALOG = [
+  {title:'Halloween',year:1978,runtime:91,score:8.3,genre:'horror',sub:'slasher',subLabel:'Slasher',synopsis:'A masked killer returns to his hometown on Halloween night and begins stalking babysitters with terrifying patience.'},
+  {title:'Scream',year:1996,runtime:111,score:8.0,genre:'horror',sub:'slasher',subLabel:'Slasher',synopsis:'A self-aware killer turns a small town into a nightmare while a group of teens tries to survive the rules of horror movies.'},
+  {title:'A Nightmare on Elm Street',year:1984,runtime:91,score:7.9,genre:'horror',sub:'slasher',subLabel:'Slasher',synopsis:'A dream-haunting murderer attacks teenagers in their sleep, making rest itself a deadly risk.'},
+  {title:'Black Christmas',year:1974,runtime:98,score:7.4,genre:'horror',sub:'slasher',subLabel:'Slasher',synopsis:'A sorority house is targeted during the holidays by a caller whose threats become brutally real.'},
+  {title:'The Texas Chain Saw Massacre',year:1974,runtime:83,score:8.1,genre:'horror',sub:'slasher',subLabel:'Slasher',synopsis:'A road trip becomes a descent into rural terror when a group of friends encounters a family of killers.'},
+  {title:'Candyman',year:1992,runtime:99,score:7.7,genre:'horror',sub:'slasher',subLabel:'Slasher',synopsis:'An urban legend grows more dangerous as a skeptical researcher becomes entangled in its bloody mythology.'},
+
+  {title:'The Exorcist',year:1973,runtime:122,score:8.6,genre:'horror',sub:'supernatural',subLabel:'Supernatural',synopsis:'A young girl shows terrifying signs of possession, forcing desperate adults to confront evil beyond medicine.'},
+  {title:'Poltergeist',year:1982,runtime:114,score:7.8,genre:'horror',sub:'supernatural',subLabel:'Supernatural',synopsis:'A family home becomes a portal for hostile spirits when their youngest child is pulled toward the other side.'},
+  {title:'The Conjuring',year:2013,runtime:112,score:7.7,genre:'horror',sub:'supernatural',subLabel:'Supernatural',synopsis:'Paranormal investigators help a family whose farmhouse is under siege by a malevolent presence.'},
+  {title:'Insidious',year:2010,runtime:103,score:7.3,genre:'horror',sub:'supernatural',subLabel:'Supernatural',synopsis:'A family discovers that the danger haunting their child comes from a realm beyond the living.'},
+  {title:'Sinister',year:2012,runtime:110,score:7.4,genre:'horror',sub:'supernatural',subLabel:'Supernatural',synopsis:'A true-crime writer finds disturbing footage in his attic and uncovers an entity tied to the deaths on screen.'},
+  {title:'The Ring',year:2002,runtime:115,score:7.6,genre:'horror',sub:'supernatural',subLabel:'Supernatural',synopsis:'A cursed videotape condemns anyone who watches it, and a journalist races to stop the chain.'},
+
+  {title:'The Shining',year:1980,runtime:146,score:8.9,genre:'horror',sub:'psychological',subLabel:'Psychological',synopsis:'An isolated hotel amplifies a caretaker’s unraveling mind until his family becomes trapped with him.'},
+  {title:'Hereditary',year:2018,runtime:127,score:8.2,genre:'horror',sub:'psychological',subLabel:'Psychological',synopsis:'Family grief peels back darker forces as inherited trauma becomes something far more literal.'},
+  {title:'The Babadook',year:2014,runtime:94,score:7.8,genre:'horror',sub:'psychological',subLabel:'Psychological',synopsis:'A widowed mother and her son are consumed by dread after a sinister children’s book enters their home.'},
+  {title:'Saint Maud',year:2019,runtime:84,score:7.5,genre:'horror',sub:'psychological',subLabel:'Psychological',synopsis:'A devout nurse becomes dangerously obsessed with saving the soul of a patient who does not want saving.'},
+  {title:'Repulsion',year:1965,runtime:105,score:7.7,genre:'horror',sub:'psychological',subLabel:'Psychological',synopsis:'A lonely young woman’s fragile mental state fractures inside her apartment as reality turns hostile.'},
+  {title:'Possession',year:1981,runtime:124,score:7.9,genre:'horror',sub:'psychological',subLabel:'Psychological',synopsis:'A collapsing marriage mutates into a feverish nightmare of suspicion, grief, and bodily horror.'},
+
+  {title:'Night of the Living Dead',year:1968,runtime:96,score:8.4,genre:'horror',sub:'zombie',subLabel:'Zombie',synopsis:'Strangers barricade themselves in a farmhouse as the dead rise outside and fear spreads inside.'},
+  {title:'Dawn of the Dead',year:1978,runtime:127,score:8.3,genre:'horror',sub:'zombie',subLabel:'Zombie',synopsis:'A group of survivors hides in a shopping mall while society collapses under waves of undead attacks.'},
+  {title:'28 Days Later',year:2002,runtime:113,score:8.1,genre:'horror',sub:'zombie',subLabel:'Zombie',synopsis:'A man wakes in an empty city and discovers that infection has turned Britain into a landscape of panic.'},
+  {title:'Train to Busan',year:2016,runtime:118,score:8.2,genre:'horror',sub:'zombie',subLabel:'Zombie',synopsis:'Passengers trapped on a speeding train fight to survive a fast-moving outbreak sweeping the country.'},
+  {title:'REC',year:2007,runtime:78,score:7.8,genre:'horror',sub:'zombie',subLabel:'Zombie',synopsis:'A news crew documenting emergency responders gets sealed inside a building during a terrifying contagion.'},
+  {title:'Return of the Living Dead',year:1985,runtime:91,score:7.4,genre:'horror',sub:'zombie',subLabel:'Zombie',synopsis:'A chemical mishap unleashes brain-hungry corpses in a punk-fueled outbreak of horror and dark comedy.'},
+
+  {title:'The Blair Witch Project',year:1999,runtime:81,score:7.3,genre:'horror',sub:'found_footage',subLabel:'Found Footage',synopsis:'Student filmmakers enter the woods to investigate a legend and leave behind only increasingly frightening footage.'},
+  {title:'Paranormal Activity',year:2007,runtime:86,score:7.1,genre:'horror',sub:'found_footage',subLabel:'Found Footage',synopsis:'A couple uses cameras to document the strange events disturbing their home each night.'},
+  {title:'Hell House LLC',year:2015,runtime:93,score:7.2,genre:'horror',sub:'found_footage',subLabel:'Found Footage',synopsis:'A haunted-house attraction goes catastrophically wrong, and investigators piece together what happened.'},
+  {title:'Lake Mungo',year:2008,runtime:87,score:7.0,genre:'horror',sub:'found_footage',subLabel:'Found Footage',synopsis:'A family grieving a drowned daughter uncovers unsettling clues through interviews, photographs, and recordings.'},
+  {title:'As Above, So Below',year:2014,runtime:93,score:6.9,genre:'horror',sub:'found_footage',subLabel:'Found Footage',synopsis:'Explorers descend into the Paris catacombs and find that the tunnels answer their sins with terror.'},
+  {title:'Gonjiam: Haunted Asylum',year:2018,runtime:95,score:7.4,genre:'horror',sub:'found_footage',subLabel:'Found Footage',synopsis:'A streaming crew enters an abandoned asylum for clicks and instead records escalating supernatural chaos.'},
+
+  {title:'Nosferatu',year:1922,runtime:94,score:8.0,genre:'horror',sub:'vampire',subLabel:'Vampire',synopsis:'A shadowy count brings plague and dread wherever he travels in this silent nightmare classic.'},
+  {title:'Dracula',year:1931,runtime:75,score:7.4,genre:'horror',sub:'vampire',subLabel:'Vampire',synopsis:'A Transylvanian noble arrives in London and preys upon the living with ancient hunger.'},
+  {title:'Let the Right One In',year:2008,runtime:114,score:8.2,genre:'horror',sub:'vampire',subLabel:'Vampire',synopsis:'A lonely boy befriends a mysterious child whose arrival brings both tenderness and bloodshed.'},
+  {title:'Near Dark',year:1987,runtime:94,score:7.5,genre:'horror',sub:'vampire',subLabel:'Vampire',synopsis:'A young man is drawn into a nomadic clan of violent vampires roaming the American night.'},
+  {title:'Interview with the Vampire',year:1994,runtime:123,score:7.7,genre:'horror',sub:'vampire',subLabel:'Vampire',synopsis:'An immortal recounts centuries of beauty, cruelty, and loneliness within vampire society.'},
+  {title:'30 Days of Night',year:2007,runtime:113,score:7.1,genre:'horror',sub:'vampire',subLabel:'Vampire',synopsis:'An Alaskan town cut off by darkness becomes an ideal hunting ground for savage predators.'},
+
+  {title:'Se7en',year:1995,runtime:127,score:9.0,genre:'thriller',sub:'serial_killer',subLabel:'Serial Killer',synopsis:'Two detectives follow a murderer whose crimes are staged around the seven deadly sins.'},
+  {title:'The Silence of the Lambs',year:1991,runtime:118,score:9.1,genre:'thriller',sub:'serial_killer',subLabel:'Serial Killer',synopsis:'A trainee agent seeks insight from a brilliant imprisoned killer to stop another predator in the wild.'},
+  {title:'Zodiac',year:2007,runtime:157,score:8.7,genre:'thriller',sub:'serial_killer',subLabel:'Serial Killer',synopsis:'Journalists and investigators become consumed by a killer whose identity remains just out of reach.'},
+  {title:'Manhunter',year:1986,runtime:120,score:7.8,genre:'thriller',sub:'serial_killer',subLabel:'Serial Killer',synopsis:'A retired profiler returns to hunt a methodical murderer and seeks help from a caged monster.'},
+  {title:'Cure',year:1997,runtime:111,score:8.1,genre:'thriller',sub:'serial_killer',subLabel:'Serial Killer',synopsis:'A detective investigates a string of killings connected by a strange man with hypnotic influence.'},
+  {title:'Memories of Murder',year:2003,runtime:132,score:8.9,genre:'thriller',sub:'serial_killer',subLabel:'Serial Killer',synopsis:'Police bungle an early serial murder case as frustration, politics, and violence poison the search for truth.'},
+
+  {title:'Chinatown',year:1974,runtime:130,score:8.8,genre:'thriller',sub:'neo_noir',subLabel:'Neo-Noir',synopsis:'A private investigator uncovers corruption, greed, and buried family rot beneath a polished city.'},
+  {title:'Blade Runner',year:1982,runtime:117,score:8.4,genre:'thriller',sub:'neo_noir',subLabel:'Neo-Noir',synopsis:'A weary hunter chases artificial humans through a rain-soaked future where identity is slippery.'},
+  {title:'Blood Simple',year:1984,runtime:96,score:8.0,genre:'thriller',sub:'neo_noir',subLabel:'Neo-Noir',synopsis:'Suspicion and betrayal spiral after a jealous husband sets a deadly plan in motion.'},
+  {title:'Drive',year:2011,runtime:100,score:7.9,genre:'thriller',sub:'neo_noir',subLabel:'Neo-Noir',synopsis:'A quiet getaway driver is pulled into a violent underworld through one failed job and one human attachment.'},
+  {title:'Nightcrawler',year:2014,runtime:117,score:8.2,genre:'thriller',sub:'neo_noir',subLabel:'Neo-Noir',synopsis:'An ambitious freelancer turns crime journalism into predation as he chases increasingly grisly footage.'},
+  {title:'Memento',year:2000,runtime:113,score:8.6,genre:'thriller',sub:'neo_noir',subLabel:'Neo-Noir',synopsis:'A man with short-term memory loss pursues revenge using notes and tattoos he can never fully trust.'},
+
+  {title:'The Conversation',year:1974,runtime:113,score:8.2,genre:'thriller',sub:'conspiracy',subLabel:'Conspiracy',synopsis:'A surveillance expert becomes morally and psychologically entangled in a recording that may foretell violence.'},
+  {title:'Blow Out',year:1981,runtime:108,score:8.0,genre:'thriller',sub:'conspiracy',subLabel:'Conspiracy',synopsis:'A sound technician accidentally records evidence of a political crime and becomes a target.'},
+  {title:'All the President\'s Men',year:1976,runtime:138,score:8.5,genre:'thriller',sub:'conspiracy',subLabel:'Conspiracy',synopsis:'Reporters uncover abuse of power through persistence, sources, and an expanding web of deceit.'},
+  {title:'The Parallax View',year:1974,runtime:102,score:7.7,genre:'thriller',sub:'conspiracy',subLabel:'Conspiracy',synopsis:'A reporter investigating political assassinations discovers an organization that recruits killers.'},
+  {title:'Enemy of the State',year:1998,runtime:132,score:7.5,genre:'thriller',sub:'conspiracy',subLabel:'Conspiracy',synopsis:'A lawyer is hunted after a murder is captured on video, exposing the reach of state surveillance.'},
+  {title:'Three Days of the Condor',year:1975,runtime:117,score:7.9,genre:'thriller',sub:'conspiracy',subLabel:'Conspiracy',synopsis:'A CIA analyst returns from lunch to find his co-workers dead and realizes his own agency may want him gone.'},
+
+  {title:'Prisoners',year:2013,runtime:153,score:8.7,genre:'thriller',sub:'paranoia',subLabel:'Paranoia',synopsis:'A father and a detective each cross moral lines after two girls disappear in a rain-soaked suburb.'},
+  {title:'Shutter Island',year:2010,runtime:138,score:8.3,genre:'thriller',sub:'paranoia',subLabel:'Paranoia',synopsis:'A marshal investigating a vanished patient at an island asylum finds himself trapped inside conflicting realities.'},
+  {title:'The Thing',year:1982,runtime:109,score:8.8,genre:'thriller',sub:'paranoia',subLabel:'Paranoia',synopsis:'Researchers in Antarctica realize any one of them could be an inhuman imitator waiting to strike.'},
+  {title:'Jacob\'s Ladder',year:1990,runtime:113,score:8.1,genre:'thriller',sub:'paranoia',subLabel:'Paranoia',synopsis:'A Vietnam veteran experiences visions, conspiracies, and memory fractures that make reality impossible to trust.'},
+  {title:'The Game',year:1997,runtime:129,score:7.9,genre:'thriller',sub:'paranoia',subLabel:'Paranoia',synopsis:'A wealthy man enters a mysterious game that systematically strips away his control.'},
+  {title:'Black Swan',year:2010,runtime:108,score:8.0,genre:'thriller',sub:'paranoia',subLabel:'Paranoia',synopsis:'A ballerina’s pursuit of perfection becomes a hallucinatory spiral of rivalry and self-destruction.'},
+
+  {title:'Alien',year:1979,runtime:117,score:9.0,genre:'scifi',sub:'alien',subLabel:'Alien Invasion',synopsis:'The crew of a commercial spaceship answers a distress signal and finds a life form built for survival and slaughter.'},
+  {title:'The Faculty',year:1998,runtime:104,score:7.1,genre:'scifi',sub:'alien',subLabel:'Alien Invasion',synopsis:'Students begin suspecting that their teachers have been replaced by something not of this world.'},
+  {title:'Invasion of the Body Snatchers',year:1978,runtime:115,score:8.1,genre:'scifi',sub:'alien',subLabel:'Alien Invasion',synopsis:'A city slowly falls to emotionless duplicates while a few survivors struggle to stay human.'},
+  {title:'The Mist',year:2007,runtime:126,score:7.8,genre:'scifi',sub:'alien',subLabel:'Alien Invasion',synopsis:'A mysterious fog traps townspeople in a market while impossible creatures stalk just beyond the glass.'},
+  {title:'Under the Skin',year:2013,runtime:108,score:7.4,genre:'scifi',sub:'alien',subLabel:'Alien Invasion',synopsis:'An enigmatic woman moves through modern Scotland with predatory purpose and a gaze that never quite fits in.'},
+  {title:'Nope',year:2022,runtime:130,score:7.6,genre:'scifi',sub:'alien',subLabel:'Alien Invasion',synopsis:'A family ranch faces a sky-borne phenomenon that turns spectacle itself into threat.'},
+
+  {title:'Brazil',year:1985,runtime:132,score:8.4,genre:'scifi',sub:'dystopia',subLabel:'Dystopia',synopsis:'A bureaucrat trapped in absurd authoritarian machinery imagines escape while the system closes in.'},
+  {title:'Children of Men',year:2006,runtime:109,score:8.9,genre:'scifi',sub:'dystopia',subLabel:'Dystopia',synopsis:'In a future without births, one disillusioned man must escort a miracle through state collapse and violence.'},
+  {title:'Gattaca',year:1997,runtime:106,score:8.2,genre:'scifi',sub:'dystopia',subLabel:'Dystopia',synopsis:'A man deemed genetically inferior assumes another identity to pursue a dream in a stratified future.'},
+  {title:'Snowpiercer',year:2013,runtime:126,score:8.0,genre:'scifi',sub:'dystopia',subLabel:'Dystopia',synopsis:'The last humans ride a train through a frozen world while class violence simmers car by car.'},
+  {title:'Videodrome',year:1983,runtime:89,score:7.9,genre:'scifi',sub:'dystopia',subLabel:'Dystopia',synopsis:'A sleazy TV executive discovers a signal that blurs media, mutation, and control.'},
+  {title:'RoboCop',year:1987,runtime:102,score:8.2,genre:'scifi',sub:'dystopia',subLabel:'Dystopia',synopsis:'A murdered officer is rebuilt as a corporate machine and gradually claws back his humanity.'},
+
+  {title:'12 Monkeys',year:1995,runtime:129,score:8.5,genre:'scifi',sub:'time_loop',subLabel:'Time Manipulation',synopsis:'A prisoner sent through time to trace a deadly plague struggles to separate prophecy from delusion.'},
+  {title:'Predestination',year:2014,runtime:97,score:7.9,genre:'scifi',sub:'time_loop',subLabel:'Time Manipulation',synopsis:'A temporal agent chases a criminal across time and confronts a paradox tied intimately to his own existence.'},
+  {title:'Timecrimes',year:2007,runtime:92,score:7.6,genre:'scifi',sub:'time_loop',subLabel:'Time Manipulation',synopsis:'One man’s attempt to fix a strange event only multiplies its consequences through looping repetition.'},
+  {title:'Coherence',year:2013,runtime:89,score:7.8,genre:'scifi',sub:'time_loop',subLabel:'Time Manipulation',synopsis:'During a dinner party, a passing comet fractures reality and turns familiar friends into uncertain doubles.'},
+  {title:'Donnie Darko',year:2001,runtime:113,score:8.1,genre:'scifi',sub:'time_loop',subLabel:'Time Manipulation',synopsis:'A troubled teenager is guided by apocalyptic visions toward a timeline he barely understands.'},
+  {title:'Edge of Tomorrow',year:2014,runtime:113,score:8.1,genre:'scifi',sub:'time_loop',subLabel:'Time Manipulation',synopsis:'A cowardly officer relives a deadly invasion until repetition turns him into a fighter.'},
+
+  {title:'Crimson Peak',year:2015,runtime:119,score:7.2,genre:'darkdrama',sub:'gothic',subLabel:'Gothic',synopsis:'A young woman enters a decaying mansion where romance, ghosts, and buried family secrets bleed together.'},
+  {title:'Rebecca',year:1940,runtime:130,score:8.2,genre:'darkdrama',sub:'gothic',subLabel:'Gothic',synopsis:'A new bride arrives at an estate dominated by the memory of the woman who came before her.'},
+  {title:'The Others',year:2001,runtime:104,score:8.0,genre:'darkdrama',sub:'gothic',subLabel:'Gothic',synopsis:'A mother protecting her photosensitive children in a remote house begins to suspect they are not alone.'},
+  {title:'The Innocents',year:1961,runtime:100,score:8.1,genre:'darkdrama',sub:'gothic',subLabel:'Gothic',synopsis:'A governess caring for two children in a country estate slowly fears the grounds are haunted.'},
+  {title:'The Devil\'s Backbone',year:2001,runtime:106,score:8.0,genre:'darkdrama',sub:'gothic',subLabel:'Gothic',synopsis:'An orphanage during wartime shelters a ghost whose presence exposes the cruelty of the living.'},
+  {title:'Sleepy Hollow',year:1999,runtime:105,score:7.4,genre:'darkdrama',sub:'gothic',subLabel:'Gothic',synopsis:'A skeptical investigator enters a village steeped in superstition and confronts a headless rider legend.'},
+
+  {title:'The Lighthouse',year:2019,runtime:109,score:8.0,genre:'darkdrama',sub:'isolation',subLabel:'Isolation',synopsis:'Two keepers on a remote island descend into madness, resentment, and mythic dread.'},
+  {title:'Misery',year:1990,runtime:107,score:8.4,genre:'darkdrama',sub:'isolation',subLabel:'Isolation',synopsis:'An injured novelist is trapped by an obsessive admirer who refuses to let her story end.'},
+  {title:'The Witch',year:2015,runtime:92,score:7.8,genre:'darkdrama',sub:'isolation',subLabel:'Isolation',synopsis:'A banished family on the edge of the wilderness collapses under fear, suspicion, and possible witchcraft.'},
+  {title:'Gerald\'s Game',year:2017,runtime:103,score:7.1,genre:'darkdrama',sub:'isolation',subLabel:'Isolation',synopsis:'A woman handcuffed to a bed in a remote house must survive both physical danger and long-buried trauma.'},
+  {title:'The Invitation',year:2015,runtime:100,score:7.5,genre:'darkdrama',sub:'isolation',subLabel:'Isolation',synopsis:'A dinner party in the hills becomes unbearable as grief and suspicion gather around every smiling gesture.'},
+  {title:'10 Cloverfield Lane',year:2016,runtime:104,score:7.8,genre:'darkdrama',sub:'isolation',subLabel:'Isolation',synopsis:'After a crash, a young woman wakes in a bunker and must decide whether her captor is protector or threat.'},
+
+  {title:'The Wicker Man',year:1973,runtime:94,score:8.0,genre:'darkdrama',sub:'cult_classic',subLabel:'Cult Classic',synopsis:'A devout policeman investigating a disappearance on a remote island is met with unnerving hospitality.'},
+  {title:'Suspiria',year:1977,runtime:99,score:8.1,genre:'darkdrama',sub:'cult_classic',subLabel:'Cult Classic',synopsis:'A ballet school glows with unnatural color while hidden violence and occult forces pulse beneath the surface.'},
+  {title:'Eraserhead',year:1977,runtime:89,score:7.9,genre:'darkdrama',sub:'cult_classic',subLabel:'Cult Classic',synopsis:'Industrial dread, anxious fatherhood, and surreal body horror combine in a nightmare that resists easy explanation.'},
+  {title:'They Live',year:1988,runtime:94,score:7.8,genre:'darkdrama',sub:'cult_classic',subLabel:'Cult Classic',synopsis:'A drifter finds sunglasses that reveal the ugly machinery of hidden control operating in plain sight.'},
+  {title:'Donnie Darko',year:2001,runtime:113,score:8.1,genre:'darkdrama',sub:'cult_classic',subLabel:'Cult Classic',synopsis:'A troubled teenager follows visions and predictions that make everyday suburbia feel cosmically unstable.'},
+  {title:'The Lost Boys',year:1987,runtime:97,score:7.7,genre:'darkdrama',sub:'cult_classic',subLabel:'Cult Classic',synopsis:'Two brothers move to a coastal town where stylish vampires make nightlife far more dangerous than expected.'}
+];
+
+const GENRES = [
+  {id:'horror', name:'Horror', emoji:'🩸', desc:'Slashers, hauntings, dread, infection, and the night.'},
+  {id:'thriller', name:'Thriller', emoji:'🔪', desc:'Paranoia, conspiracies, killers, and moral collapse.'},
+  {id:'scifi', name:'Sci-Fi', emoji:'👁️', desc:'Alien terror, futures gone wrong, and reality bending.'},
+  {id:'darkdrama', name:'Dark Drama', emoji:'🕯️', desc:'Gothic mood, isolation, and cult-path narratives.'}
+];
+
+const SUBS = {
+  horror:[
+    {id:'slasher', name:'Slasher', desc:'Masked killers, pursuit, and final-girl energy.'},
+    {id:'supernatural', name:'Supernatural', desc:'Possession, curses, ghosts, and entities.'},
+    {id:'psychological', name:'Psychological', desc:'Unstable minds and intimate dread.'},
+    {id:'zombie', name:'Zombie', desc:'Outbreak panic and undead survival.'},
+    {id:'found_footage', name:'Found Footage', desc:'Documented fear and collapsing control.'},
+    {id:'vampire', name:'Vampire', desc:'Elegance, hunger, and nocturnal ruin.'}
+  ],
+  thriller:[
+    {id:'serial_killer', name:'Serial Killer', desc:'Procedural obsession and predatory intelligence.'},
+    {id:'neo_noir', name:'Neo-Noir', desc:'Dark cities, damaged people, compromised choices.'},
+    {id:'conspiracy', name:'Conspiracy', desc:'Systems of power hiding behind closed doors.'},
+    {id:'paranoia', name:'Paranoia', desc:'Trust collapses and perception starts to rot.'}
+  ],
+  scifi:[
+    {id:'alien', name:'Alien Invasion', desc:'Contact turns hostile.'},
+    {id:'dystopia', name:'Dystopia', desc:'The future is structured against you.'},
+    {id:'time_loop', name:'Time Manipulation', desc:'Paradox, repetition, and temporal dread.'}
+  ],
+  darkdrama:[
+    {id:'gothic', name:'Gothic', desc:'Decay, secrets, and beautiful menace.'},
+    {id:'isolation', name:'Isolation', desc:'Small spaces, small groups, big pressure.'},
+    {id:'cult_classic', name:'Cult Classic', desc:'Distinctive films that linger for years.'}
+  ]
+};
+
+let state = { view:'genres', genre:null, sub:null, minScore:0, yearFloor:0, results:[], used:new Set(), watchlist:[], dark:true };
+
+function init(){
+  lucide.createIcons();
+  renderGenres();
+  updateWatchBadge();
+}
+
+function goHome(){
+  state.view='genres'; state.genre=null; state.sub=null; state.results=[]; state.used=new Set();
+  renderGenres();
+}
+
+function selectGenre(id){
+  state.genre = GENRES.find(g => g.id===id);
+  state.view = 'subs';
+  renderSubs();
+}
+
+function selectSub(id){
+  state.sub = SUBS[state.genre.id].find(s => s.id===id);
+  state.minScore = 0;
+  state.yearFloor = 0;
+  state.used = new Set();
+  state.view = 'movies';
+  drawFive();
+}
+
+function filteredPool(){
+  return CATALOG.filter(m =>
+    m.genre === state.genre.id &&
+    m.sub === state.sub.id &&
+    m.score >= state.minScore &&
+    m.year >= state.yearFloor
+  );
+}
+
+function drawFive(){
+  const pool = filteredPool();
+  const unseen = pool.filter(m => !state.used.has(m.title + m.year));
+  const source = unseen.length >= 5 ? unseen : pool;
+  if (source.length === 0) {
+    state.results = [];
+    renderMovies();
+    return;
+  }
+  if (unseen.length < 5) state.used = new Set();
+  state.results = shuffle(source).slice(0, Math.min(5, source.length));
+  state.results.forEach(m => state.used.add(m.title + m.year));
+  renderMovies();
+}
+
+function renderGenres(){
+  root().innerHTML = `
+    <div class="section-title">Choose a Genre</div>
+    <section class="grid genre-grid">
+      ${GENRES.map(g => `
+        <button class="genre-card" onclick="selectGenre('${g.id}')" aria-label="Choose ${esc(g.name)}">
+          <div class="emoji">${g.emoji}</div>
+          <h3>${esc(g.name)}</h3>
+          <p>${esc(g.desc)}</p>
+        </button>
+      `).join('')}
+    </section>`;
+  lucide.createIcons();
+}
+
+function renderSubs(){
+  const subs = SUBS[state.genre.id] || [];
+  root().innerHTML = `
+    ${crumb([{label:'Genres', action:'goHome()'},{label:state.genre.name, active:true}])}
+    <div class="section-title">${esc(state.genre.name)} Sub-Genres</div>
+    <section class="grid sub-grid">
+      ${subs.map(s => `
+        <button class="sub-card" onclick="selectSub('${s.id}')" aria-label="Choose ${esc(s.name)}">
+          <h3>${esc(s.name)}</h3>
+          <p>${esc(s.desc)}</p>
+        </button>
+      `).join('')}
+    </section>`;
+  lucide.createIcons();
+}
+
+function renderMovies(){
+  const count = filteredPool().length;
+  root().innerHTML = `
+    ${crumb([{label:'Genres', action:'goHome()'},{label:state.genre.name, action:`selectGenre('${state.genre.id}')`},{label:state.sub.name, active:true}])}
+    <section class="panel filters">
+      <div class="filter">
+        <label for="scoreFilter">Min Score</label>
+        <select class="select" id="scoreFilter" onchange="updateFilters()">
+          <option value="0" ${state.minScore===0?'selected':''}>Any</option>
+          <option value="7" ${state.minScore===7?'selected':''}>7.0+</option>
+          <option value="7.5" ${state.minScore===7.5?'selected':''}>7.5+</option>
+          <option value="8" ${state.minScore===8?'selected':''}>8.0+</option>
+          <option value="8.5" ${state.minScore===8.5?'selected':''}>8.5+</option>
+        </select>
+      </div>
+      <div class="filter">
+        <label for="yearFilter">From Year</label>
+        <select class="select" id="yearFilter" onchange="updateFilters()">
+          <option value="0" ${state.yearFloor===0?'selected':''}>All</option>
+          <option value="1970" ${state.yearFloor===1970?'selected':''}>1970+</option>
+          <option value="1980" ${state.yearFloor===1980?'selected':''}>1980+</option>
+          <option value="1990" ${state.yearFloor===1990?'selected':''}>1990+</option>
+          <option value="2000" ${state.yearFloor===2000?'selected':''}>2000+</option>
+          <option value="2010" ${state.yearFloor===2010?'selected':''}>2010+</option>
+        </select>
+      </div>
+    </section>
+
+    <div class="movies-top">
+      <div>
+        <h2>${esc(state.sub.name)} <span>Picks</span></h2>
+        <p>${count} films in this offline pocket catalog.</p>
+      </div>
+      <button class="btn-primary" onclick="drawFive()"><i data-lucide="shuffle" width="16" height="16"></i> New 5</button>
+    </div>
+
+    ${state.results.length ? `
+      <section class="grid movie-grid">
+        ${state.results.map(movieCard).join('')}
+      </section>
+    ` : `
+      <section class="panel state">
+        <i data-lucide="film" width="42" height="42" style="margin:0 auto"></i>
+        <h3>No Matches</h3>
+        <p>That filter combination leaves this offline catalog empty. Lower the minimum score or broaden the year range.</p>
+      </section>
+    `}`;
+  lucide.createIcons();
+  updateCardButtons();
+}
+
+function movieCard(m){
+  const saved = state.watchlist.some(w => w.title===m.title && w.year===m.year);
+  const posterClass = `poster poster-${m.sub}`;
+  return `
+    <article class="panel movie-card">
+      <div class="${posterClass}">
+        <div class="poster-content">
+          <div class="poster-label">${esc(m.subLabel)}</div>
+          <div class="poster-title">${esc(m.title)}</div>
+          <div class="poster-year">${m.year}</div>
+        </div>
+      </div>
+      <div class="movie-body">
+        <div class="movie-head">
+          <h3 class="movie-title">${esc(m.title)}</h3>
+          <div class="score">${m.score.toFixed(1)}</div>
+        </div>
+        <div class="meta">
+          <span>${m.year}</span>
+          <span>•</span>
+          <span>${m.runtime} min</span>
+          <span>•</span>
+          <span>Dread Score</span>
+        </div>
+        <p class="synopsis">${esc(m.synopsis)}</p>
+        <div class="tags">
+          <span class="tag">${esc(state.genre.name)}</span>
+          <span class="tag">${esc(m.subLabel)}</span>
+        </div>
+        <div class="card-actions">
+          <button class="ghost-btn ${saved?'saved':''}" onclick="toggleWatchlist('${jsEsc(m.title)}', ${m.year})" data-save="${attrEsc(m.title)}-${m.year}">
+            <i data-lucide="bookmark" width="14" height="14"></i>
+            ${saved ? 'Saved' : 'Save'}
+          </button>
+          <div class="meta"><span>${m.runtime} min</span></div>
+        </div>
+      </div>
+    </article>`;
+}
+
+function updateFilters(){
+  state.minScore = parseFloat(document.getElementById('scoreFilter').value) || 0;
+  state.yearFloor = parseInt(document.getElementById('yearFilter').value) || 0;
+  state.used = new Set();
+  drawFive();
+}
+
+function toggleWatchlist(title, year){
+  const i = state.watchlist.findIndex(m => m.title===title && m.year===year);
+  if (i >= 0) {
+    state.watchlist.splice(i,1);
+  } else {
+    const movie = CATALOG.find(m => m.title===title && m.year===year);
+    if (movie) state.watchlist.push(movie);
+  }
+  updateWatchBadge();
+  updateCardButtons();
+  if (document.getElementById('watchlistPanel').classList.contains('open')) renderWatchlist();
+}
+
+function updateCardButtons(){
+  document.querySelectorAll('[data-save]').forEach(btn => {
+    const key = btn.getAttribute('data-save');
+    const saved = state.watchlist.some(m => `${m.title}-${m.year}` === key);
+    btn.classList.toggle('saved', saved);
+    btn.innerHTML = `<i data-lucide="bookmark" width="14" height="14"></i>${saved ? 'Saved' : 'Save'}`;
+  });
+  lucide.createIcons();
+}
+
+function updateWatchBadge(){
+  const badge = document.getElementById('watchBadge');
+  badge.textContent = state.watchlist.length;
+  badge.style.display = state.watchlist.length ? 'flex' : 'none';
+}
+
+function openWatchlist(){
+  renderWatchlist();
+  document.getElementById('watchlistPanel').classList.add('open');
+  document.getElementById('backdrop').classList.add('show');
+}
+
+function closeWatchlist(){
+  document.getElementById('watchlistPanel').classList.remove('open');
+  document.getElementById('backdrop').classList.remove('show');
+}
+
+function renderWatchlist(){
+  const box = document.getElementById('watchlistBody');
+  if (!state.watchlist.length) {
+    box.innerHTML = `<section class="state"><i data-lucide="bookmark" width="40" height="40" style="margin:0 auto"></i><h3>Nothing Saved</h3><p>Tap Save on any card and it will appear here.</p></section>`;
+    lucide.createIcons();
+    return;
+  }
+  box.innerHTML = state.watchlist.map(m => `
+    <article class="watch-item">
+      <div class="watch-thumb poster-${m.sub}"><span>${esc(m.title)}</span></div>
+      <div>
+        <div class="watch-title">${esc(m.title)}</div>
+        <div class="watch-meta">${m.year} • ${m.runtime} min • ${m.score.toFixed(1)}</div>
+      </div>
+      <button class="icon-btn" onclick="toggleWatchlist('${jsEsc(m.title)}', ${m.year})" aria-label="Remove ${esc(m.title)}"><i data-lucide="x" width="16" height="16"></i></button>
+    </article>
+  `).join('');
+  lucide.createIcons();
+}
+
+function toggleTheme(){
+  state.dark = !state.dark;
+  document.documentElement.setAttribute('data-theme', state.dark ? 'dark' : 'light');
+  document.getElementById('themeBtn').innerHTML = state.dark
+    ? '<i data-lucide="moon" width="18" height="18"></i>'
+    : '<i data-lucide="sun" width="18" height="18"></i>';
+  lucide.createIcons();
+}
+
+function crumb(items){
+  return `<nav class="breadcrumb" aria-label="Breadcrumb">${items.map((item, i) => {
+    const sep = i ? '<span>›</span>' : '';
+    if (item.active) return `${sep}<span>${esc(item.label)}</span>`;
+    return `${sep}<button onclick="${item.action}">${esc(item.label)}</button>`;
+  }).join('')}</nav>`;
+}
+
+function shuffle(arr){
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function root(){ return document.getElementById('appRoot'); }
+function esc(v){ return String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+function attrEsc(v){ return String(v).replaceAll('"','&quot;'); }
+function jsEsc(v){ return String(v).replaceAll('\\','\\\\').replaceAll("'","\\'"); }
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeWatchlist(); });
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
